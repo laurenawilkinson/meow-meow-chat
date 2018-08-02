@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chatroom</title>
+    </head>
+    <body>
+        <h2>Chatroom</h2>
+        <div id="chat"></div>
+        <br>
+        <input type="text" placeholder="name" id="name">
+        <input type="text" placeholder="type a message..." id="msg">
+        <button id="send">Send</button>
+        
+        
+        <script>
+            const ws = new WebSocket('ws://localhost:7777');
+            
+            let chat = document.getElementById("chat");
+            
+            ws.onopen = () => { 
+                console.log('WebSocket connection is open...');
+            };
+            ws.onmessage = (e) => { 
+                console.log(`received: ${e.data}`);
+                
+                // JSON.parse e.data
+                const json = JSON.parse(e.data);
+                
+                chat.innerHTML = chat.innerHTML + '<p class="sentMsg">' + json.name + ': ' + json.message + '</p>';
+
+            };
+            ws.onclose = () => { 
+                console.log('WebSocket has disconnected');
+            };
+            
+            let name = document.getElementById("name");
+            let msg = document.getElementById("msg");
+            let btnSend = document.getElementById("send");
+
+            btnSend.addEventListener("click", sendMsg);
+            
+            function sendMsg(){
+//                console.log(name.value);
+//                console.log(msg.value);
+                const message = {
+                    name: name.value,
+                    message: msg.value
+                };
+                ws.send(JSON.stringify(message));
+//                chat.innerHTML = chat.innerHTML + '<p class="sentMsg">' + name.value + ': ' + msg.value + '</p>';
+            }
+        </script>
+    </body>
+</html>
