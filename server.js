@@ -1,16 +1,23 @@
 //require just server things from the ws (websocket) package, then create the server (wss)
-const WebSocketServer = require('ws'),
-    wss = new WebSocketServer.Server({port: process.env.PORT});
+const express = require('express');
+const WebSocketServer = require('ws');
+const path = require('path');
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX) )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+const wss = new WebSocketServer.Server({ server });
 
 // Broadcast to all.
 wss.broadcast = function broadcast(data) {
-  if (wss.clients.length < 10){
-      wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocketServer.OPEN) {
-        client.send(data);
-      }
-    })
-  };
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocketServer.OPEN) {
+      client.send(data);
+    }
+  });
 };
 
 wss.on('connection', (ws) => {
