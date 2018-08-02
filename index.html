@@ -11,46 +11,8 @@
         <input type="text" placeholder="type a message..." id="msg">
         <button id="send">Send</button>
         
-        
-        <script>
-            let HOST = location.origin.replace(/^http/, 'ws')
+        <script type="text/javascript" src="client.js">
             
-            const ws = new WebSocket(HOST);
-            
-            let chat = document.getElementById("chat");
-            
-            ws.onopen = () => { 
-                console.log('WebSocket connection is open...');
-            };
-            ws.onmessage = (e) => { 
-                console.log(`received: ${e.data}`);
-                
-                // JSON.parse e.data
-                const json = JSON.parse(e.data);
-                
-                chat.innerHTML = chat.innerHTML + '<p class="sentMsg">' + json.name + ': ' + json.message + '</p>';
-
-            };
-            ws.onclose = () => { 
-                console.log('WebSocket has disconnected');
-            };
-            
-            let name = document.getElementById("name");
-            let msg = document.getElementById("msg");
-            let btnSend = document.getElementById("send");
-
-            btnSend.addEventListener("click", sendMsg);
-            
-            function sendMsg(){
-//                console.log(name.value);
-//                console.log(msg.value);
-                const message = {
-                    name: name.value,
-                    message: msg.value
-                };
-                ws.send(JSON.stringify(message));
-//                chat.innerHTML = chat.innerHTML + '<p class="sentMsg">' + name.value + ': ' + msg.value + '</p>';
-            }
         </script>
     </body>
 </html>
