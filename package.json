@@ -1,0 +1,24 @@
+{
+  "name": "meow-meow-chat",
+  "version": "1.0.0",
+  "description": "a websocket chat app",
+  "main": "server.js",
+  "dependencies": {
+    "ws": "^5.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laurenawilkinson/meow-meow-chat.git"
+  },
+  "author": "Lauren",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/laurenawilkinson/meow-meow-chat/issues"
+  },
+  "homepage": "https://github.com/laurenawilkinson/meow-meow-chat#readme"
+}
