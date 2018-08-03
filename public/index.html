@@ -2,60 +2,44 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Chatroom</title>
+        <title>Meow Meow Chat</title>
         <link rel="stylesheet" href="styles.css" type="text/css">
     </head>
-    <style>
-        
-    </style>
     <body>
-        <h2>Chatroom</h2>
-        <div id="chat"></div>
-        <br>
-        <input type="text" placeholder="name" id="name">
-        <input type="text" placeholder="type a message..." id="msg">
-        <button id="send">Send</button>
-        
-        <script>
-            const HOST = location.origin.replace(/^http/, 'ws'),
-                    ws = new WebSocket(HOST),            
-                    chat = document.getElementById("chat"),
-                    name = document.getElementById("name"),
-                    msg = document.getElementById("msg"),
-                    btnSend = document.getElementById("send");
-            
-            ws.onopen = () => { 
-                console.log('WebSocket connection is open...');
-            };
-            ws.onmessage = (e) => { 
-                console.log(`received: ${e.data}`);
-                const json = JSON.parse(e.data);
-                chat.innerHTML = chat.innerHTML + '<p class="sentMsg">' + json.name + ': ' + json.message + '</p>';
-
-            };
-            ws.onclose = () => { 
-                console.log('WebSocket has disconnected');
-            };
-            ws.onerror = (error) => {
-                console.error(error);
-            }
-            
-            btnSend.addEventListener("click", sendMsg);
-            msg.addEventListener("keyup", (e) =>{
-                if(e.keyCode === 13){
-                    sendMsg();
-                }
-            });
-
-            function sendMsg(){
-                const message = {
-                    name: name.value,
-                    message: msg.value
-                };
-                ws.send(JSON.stringify(message));
-                msg.value = '';
-                msg.autofocus = true;
-            }
-        </script>
+        <div class="container">
+            <h2>Meow Meow Chat</h2>
+            <div id="chat"></div>
+            <br>
+            <div id="userbar">
+                <img src="images/01.png" alt="Profile picture" id="profileImage" width="50px" height="50px">
+                <div class="flex-column">
+                    <input type="text" placeholder="name" id="name">
+                    <input type="text" placeholder="type a message..." id="msg">
+                </div>
+                <button id="send">Send</button>
+                <div class="flex-column">
+                    <div class="flex-row">
+                        <label class="radio-container">
+                            <input type="radio" name="colours" value="black" checked>
+                            <span class="radio-check"></span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="colours" value="blue">
+                            <span class="radio-check"></span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="colours" value="green">
+                            <span class="radio-check"></span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="colours" value="red">
+                            <span class="radio-check"></span>
+                        </label>
+                    </div>
+                    <input type="text" placeholder="custom colour" id="colour" value="black">
+                </div>
+            </div>
+        </div>
+        <script src="client.js"></script>
     </body>
 </html>

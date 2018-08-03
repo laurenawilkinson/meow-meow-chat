@@ -23,10 +23,7 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', (ws) => {
   ws.on('message', (message) => {
       console.log('received: ', message);
-      //ws.send(message.split('').reverse().join(''));
       const json = JSON.parse(message);
-      console.log(json.name);
-      console.log(json.message);
       wss.broadcast(message);
   });
   ws.on('close', () => {
