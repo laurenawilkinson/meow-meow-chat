@@ -24,7 +24,8 @@ html{
 
 #userbar{
     display: flex;
-    justify-content: center;
+    width: 60%;
+    margin: 0 auto;
 
     input[type=radio]{
         display: inline-block;
