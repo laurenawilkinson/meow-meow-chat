@@ -6,7 +6,7 @@
 
 ## Features in the works
 
-:cat: Styling
+:cat: Styling  
 :cat: Possibly markup messages  
 :cat: Chat history appears when you enter the chatroom  
 :cat: Typing indicator
