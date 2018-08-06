@@ -1,36 +1,37 @@
 const HOST = location.origin.replace(/^http/, 'ws'),
-        ws = new WebSocket(HOST),            
-        chat = document.getElementById("chat"),
-        name = document.getElementById("name"),
-        msg = document.getElementById("msg"),
-        btnSend = document.getElementById("send"),
-        img = document.getElementById('profileImage'),
-        chatMessages = document.getElementsByClassName('msg'),
-        colours = document.getElementsByName('colours'),
-        customColour = document.getElementById('colour');
-
-pageLoad();
+        ws = new WebSocket(HOST);
+        
+let chatMessages = [];
 
 // ws stuff
 ws.onopen = () => { 
     console.log('WebSocket connection is open...');
 };
 ws.onmessage = (e) => { 
-    
     const json = JSON.parse(e.data);
     console.log(json);
-    if(chatMessages.length < 30){
-        chat.innerHTML += 
+
+    if(json.name == undefined){
+        app.memberCount = json;
+    }
+    else{
+        let newMsg = 
         `<div class="msg">
             <img src="${json.image}" class="msg-pic">
-                <div class="flex-column">
-                    <span class="msg-name" style="color: ${json.colour}">${json.name}</span>
-                    <span class="msg-message">${json.message}</span>
-                </div>
+            <div class="flex-column">
+                <span class="msg-name" style="color: ${json.colour}">${json.name}</span>
+                <span class="msg-message">${json.message}</span>
+            </div>
         </div>`;
-    }
-    
+        
+        chatMessages.push(newMsg);
+        if(chatMessages.length > 20){
+            chatMessages.shift();
+        }
 
+        let chatMsgs = chatMessages.toString().replace(/,/g, '');
+        document.getElementById("chat").innerHTML = chatMsgs;
+    }
 };
 ws.onclose = () => { 
     console.log('WebSocket has disconnected');
@@ -39,65 +40,61 @@ ws.onerror = (error) => {
     console.error(error);
 }
 
-// DOM manipulation
-btnSend.addEventListener("click", sendMsg);
-msg.addEventListener("keyup", (e) =>{
-    if(e.keyCode === 13){
-        sendMsg();
-    }
+
+// VUE stuff
+Vue.component('pic-select', {
+    props: ['images'],
+    template:
+        `   
+        <div class="flex-row">
+            <p>Change your picture here!</p>
+            <img v-for="image in images" class="profile-image" :src="image" @click="$emit('set-image', image)">
+        </div>
+        `
 });
 
-function sendMsg(){
-    if (msg.value.length > 1 && msg.value.length <= 250){
-        let color = getColour();       
-        
-        const message = {
-            name: name.value,
-            message: msg.value,
-            image: img.src,
-            colour: color
-        };
-    
-        ws.send(JSON.stringify(message));
-        msg.value = '';
-        msg.autofocus = true;
-    }
-    else if (msg.value.length <= 1){
-        console.error('Your message is too short!');
-    }
-    else if (msg.value.length > 250){
-        console.error('Your message is too long! (max 250 char)');
-    }
-}
-
-function pageLoad(){
-    let r = Math.floor(Math.random() * 5);
-
-    img.src = `images/0${r}.png`;
-    
-    for (let i = 0, l = colours.length; i < l; i++){
-        colours[i].addEventListener('click', () =>{
-            customColour.value = colours[i].value;
-        });
-    }
-}
-
-
-
-function getColour(){
-    let color = '#000';
-    if(customColour.value != ''){
-        color = customColour.value;
-        for (let i = 0, l = colours.length; i < l; i++){
-            colours[i].checked = false;
+let app = new Vue({
+    el: '#app',
+    data: {
+        clientName: '',
+        clientMsg: '',
+        colour: 'black',
+        memberCount: 0,
+        togglePic: true,
+        images: ['images/00.png', 'images/01.png', 'images/02.png', 'images/03.png', 'images/04.png'],
+        profileImage: 'images/00.png'
+    },
+    methods: {
+        sendMsg: function(){
+            if (this.clientMsg.length > 1 && this.clientMsg.length <= 250 && this.clientName !== ""){
+                const message = {
+                    name: this.clientName,
+                    message: this.clientMsg,
+                    image: this.profileImage,
+                    colour: this.colour
+                };
+            
+                ws.send(JSON.stringify(message));
+                this.clientMsg = '';
+                this.clientMsg.autofocus = true;
+            }
+            else if (this.clientMsg.length <= 1){
+                console.error('Your message is too short!');
+            }
+            else if (this.clientMsg.length > 250){
+                console.error('Your message is too long! (max 250 char)');
+            }
+            else if (this.clientName == ""){
+                console.error('You must have a name to send a message!');
+            }
+        },
+        setImage: function(image){
+            this.profileImage = image;
         }
+    },
+    created: function(){
+        let r = Math.floor(Math.random() * this.images.length);
+        this.setImage(`images/0${r}.png`);
     }
+})
 
-    for (let i = 0, l = colours.length; i < l; i++){
-        if (colours[i].checked){
-            color = colours[i].value;
-        }
-    }
-    
-    return color;
-}

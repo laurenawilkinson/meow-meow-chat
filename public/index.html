@@ -4,41 +4,43 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Meow Meow Chat</title>
         <link rel="stylesheet" href="styles.css" type="text/css">
+        <script src="vue.js"></script>
     </head>
     <body>
-        <div class="container">
+        <div id="app" class="container">
             <h2>Meow Meow Chat</h2>
+            <p>There are {{ memberCount }} members in the chat</p>
             <div id="chat"></div>
-            <br>
             <div id="userbar">
-                <img src="images/01.png" alt="Profile picture" id="profileImage" width="50px" height="50px">
+                <img :src="profileImage" alt="Profile picture" class="profile-image" @click="togglePic = !togglePic">
                 <div class="flex-column">
-                    <input type="text" placeholder="name" id="name">
-                    <input type="text" placeholder="type a message..." id="msg">
+                    <input type="text" placeholder="name" v-model="clientName" maxlength="25">
+                    <input type="text" placeholder="type a message..." @keyup.enter="sendMsg" v-model="clientMsg" maxlength="250">
                 </div>
-                <button id="send">Send</button>
+                <button id="send" @click="sendMsg">Send</button>
                 <div class="flex-column">
                     <div class="flex-row">
                         <label class="radio-container">
-                            <input type="radio" name="colours" value="black" checked>
+                            <input type="radio" name="colours" value="black" v-model="colour" checked>
                             <span class="radio-check"></span>
                         </label>
                         <label class="radio-container">
-                            <input type="radio" name="colours" value="blue">
+                            <input type="radio" name="colours" value="blue" v-model="colour">
                             <span class="radio-check"></span>
                         </label>
                         <label class="radio-container">
-                            <input type="radio" name="colours" value="green">
+                            <input type="radio" name="colours" value="green" v-model="colour">
                             <span class="radio-check"></span>
                         </label>
                         <label class="radio-container">
-                            <input type="radio" name="colours" value="red">
+                            <input type="radio" name="colours" value="red" v-model="colour">
                             <span class="radio-check"></span>
                         </label>
                     </div>
-                    <input type="text" placeholder="custom colour" id="colour" value="black">
+                    <input type="text" placeholder="custom colour" v-model="colour">
                 </div>
             </div>
+            <pic-select v-if="togglePic" :images="images" @set-image="setImage($event)"></pic-select>
         </div>
         <script src="client.js"></script>
     </body>
