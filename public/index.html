@@ -39,8 +39,9 @@
                     </div>
                     <input type="text" placeholder="custom colour" v-model="colour">
                 </div>
+                <pic-select v-if="togglePic" :images="images" @set-image="setImage($event)"></pic-select>
             </div>
-            <pic-select v-if="togglePic" :images="images" @set-image="setImage($event)"></pic-select>
+            
         </div>
         <script src="client.js"></script>
     </body>

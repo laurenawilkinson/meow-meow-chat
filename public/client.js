@@ -46,7 +46,7 @@ Vue.component('pic-select', {
     props: ['images'],
     template:
         `   
-        <div class="flex-row">
+        <div id="pic-change">
             <p>Change your picture here!</p>
             <img v-for="image in images" class="profile-image" :src="image" @click="$emit('set-image', image)">
         </div>
