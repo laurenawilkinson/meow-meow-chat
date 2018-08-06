@@ -6,8 +6,7 @@
 
 ## Features in the works
 
-:cat: Styling!  
-:cat: Profile image  
-:cat: Custom colours for usernames and messages, possibly markup messages  
+:cat: Styling
+:cat: Possibly markup messages  
 :cat: Chat history appears when you enter the chatroom  
- 
+:cat: Typing indicator
