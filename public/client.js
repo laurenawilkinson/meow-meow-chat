@@ -18,7 +18,7 @@ ws.onmessage = (e) => {
         let newMsg = 
         `<div class="msg">
             <img src="${json.image}" class="msg-pic">
-            <div class="flex-column">
+            <div class="col">
                 <span class="msg-name" style="color: ${json.colour}">${json.name}</span>
                 <span class="msg-message">${json.message}</span>
             </div>
@@ -59,12 +59,36 @@ let app = new Vue({
         clientName: '',
         clientMsg: '',
         colour: 'black',
+        members: [],
         memberCount: 0,
-        togglePic: true,
-        images: ['images/00.png', 'images/01.png', 'images/02.png', 'images/03.png', 'images/04.png'],
+        togglePic: false,
+        toggleModal: true,
+        error: '',
+        images: ['images/00.png', 'images/01.png', 'images/02.png', 'images/03.png', 'images/04.png', 'images/05.png', 'images/06.png', 'images/07.png'],
         profileImage: 'images/00.png'
     },
+    computed: {
+        clientInfo: function (){
+            return {
+                name: this.clientName,
+                image: this.profileImage
+            }; 
+        }
+    },
     methods: {
+        joinNamed: function(name){
+            if (name != ''){
+                this.clientName = name;
+                this.toggleModal = false;
+            }
+            else{
+                this.error = 'Enter a name between 1-15 characters'
+            }
+        },
+        joinAnon: function(){
+            this.clientName = 'Anonymous Feline';
+            this.toggleModal = false;
+        },
         sendMsg: function(){
             if (this.clientMsg.length > 1 && this.clientMsg.length <= 250 && this.clientName !== ""){
                 const message = {
@@ -90,6 +114,7 @@ let app = new Vue({
         },
         setImage: function(image){
             this.profileImage = image;
+            this.togglePic = false;
         }
     },
     created: function(){
