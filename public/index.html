@@ -3,42 +3,80 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Meow Meow Chat</title>
-        <link rel="stylesheet" href="styles.css" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Inconsolata|M+PLUS+Rounded+1c:300,400,700" rel="stylesheet">
+        <link rel="stylesheet" href="css/main.css" type="text/css">
+        <script src="vue.js"></script>
     </head>
     <body>
-        <div class="container">
-            <h2>Meow Meow Chat</h2>
-            <div id="chat"></div>
-            <br>
-            <div id="userbar">
-                <img src="images/01.png" alt="Profile picture" id="profileImage" width="50px" height="50px">
-                <div class="flex-column">
-                    <input type="text" placeholder="name" id="name">
-                    <input type="text" placeholder="type a message..." id="msg">
+        <div id="app" class="container">
+            <div class="modal" v-if="toggleModal">
+                <h2>Hey there!</h2>
+                <p>Welcome to Meow Meow Chat. To get started, type in your name below.</p>
+                <div v-if="error" class="error"><span>{{ error }}</span></div>
+                <div class="btn-group">
+                    <input type="text" @keyup.enter="joinNamed(clientName)" placeholder="name..." v-model="clientName" maxlength="15" autofocus>
+                    <a class="btn" @click="joinNamed(clientName)"><span>Enter</span></a>
                 </div>
-                <button id="send">Send</button>
+                <span class="btn-alt" @click="joinAnon">Join Anonomously</span>
+            </div>
+
+            <h2>Meow Meow Chat</h2>
+
+            <div class="main">
+                <div id="chat"></div>
+                <div id="sidebar">
+                    <div class="user-settings">
+                        <img :src="profileImage" alt="Profile picture" class="profile-image" @click="togglePic = !togglePic">
+                        <span>{{ clientName }}</span>
+                        <span>{{ colour }}</span>
+                    </div>
+                    <div class="users">
+                        <div class="user-tile" v-for="(member, i) in members" :key="i">
+                            {{ clientInfo }}
+                        </div>
+                    </div>
+                    <span>{{ memberCount }} members in chat</span>
+                </div>
+                <input type="text" placeholder="type a message..." @keyup.enter="sendMsg" v-model="clientMsg" maxlength="250">
+                <a id="send" class="btn" @click="sendMsg"><img src="images/paper-plane.png" width="24" height="16"></a>
+            </div>
+            <pic-select v-if="togglePic" :images="images" @set-image="setImage($event)"></pic-select>
+            <footer>
+                <p>Made with <a href="https://github.com/laurenawilkinson/meow-meow-chat" id="heart">❤</a> by <a href="https://github.com/laurenawilkinson">Lauren</a></p>
+            </footer>
+
+            <!--
+            <div id="userbar">
+                <img :src="profileImage" alt="Profile picture" class="profile-image" @click="togglePic = !togglePic">
+                <div class="flex-column">
+                    <input type="text" placeholder="name" v-model="clientName" maxlength="15">
+                    <input type="text" placeholder="type a message..." @keyup.enter="sendMsg" v-model="clientMsg" maxlength="250">
+                </div>
+                <a id="send" class="btn" @click="sendMsg">Send</a>
                 <div class="flex-column">
                     <div class="flex-row">
                         <label class="radio-container">
-                            <input type="radio" name="colours" value="black" checked>
+                            <input type="radio" name="colours" value="black" v-model="colour" checked>
                             <span class="radio-check"></span>
                         </label>
                         <label class="radio-container">
-                            <input type="radio" name="colours" value="blue">
+                            <input type="radio" name="colours" value="blue" v-model="colour">
                             <span class="radio-check"></span>
                         </label>
                         <label class="radio-container">
-                            <input type="radio" name="colours" value="green">
+                            <input type="radio" name="colours" value="green" v-model="colour">
                             <span class="radio-check"></span>
                         </label>
                         <label class="radio-container">
-                            <input type="radio" name="colours" value="red">
+                            <input type="radio" name="colours" value="red" v-model="colour">
                             <span class="radio-check"></span>
                         </label>
                     </div>
-                    <input type="text" placeholder="custom colour" id="colour" value="black">
+                    <input type="text" placeholder="custom colour" v-model="colour">
                 </div>
+               
             </div>
+        -->
         </div>
         <script src="client.js"></script>
     </body>
