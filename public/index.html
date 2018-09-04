@@ -40,10 +40,10 @@
                 <p class="chat-hint" v-cloak>{{ hint }}</p>
                 <div id="chat"></div>
                 <div id="sidebar">
-                    <div class="user-settings" :class="{ hidden: notActive }">
-                        <img :src="profileImage" alt="Profile picture" class="user-settings__image" @click="togglePic = !togglePic" v-cloak>
-                        <span class="user-settings__name" :style="{ color: clientColour }" @click="toggleName = !toggleName" v-cloak>{{ clientName }}</span>
-                        <div class="user-settings__colour" v-cloak>
+                    <div class="user-settings">
+                        <img :src="profileImage" alt="Profile picture" class="user-settings__image" @click="togglePic = !togglePic"  :class="{ hidden: notActive }" v-cloak>
+                        <span class="user-settings__name" :style="{ color: clientColour }"  :class="{ hidden: notActive }" @click="toggleName = !toggleName" v-cloak>{{ clientName }}</span>
+                        <div class="user-settings__colour"  :class="{ hidden: notActive }" v-cloak>
                             <input type="color" name="color" v-model="clientColour">
                             <span>{{ clientColour }}</span>
                         </div>
