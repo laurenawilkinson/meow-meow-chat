@@ -6,7 +6,7 @@
 
 ## Features in the works
 
-- Styling, utilising CSS Grid and Flexbox  
+- ~~Styling, utilising CSS Grid and Flexbox~~  
 - Possibly markup messages  
 - Chat history appears when you enter the chatroom  
 - Typing indicator
