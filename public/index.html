@@ -3,61 +3,87 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Meow Meow Chat</title>
-        <link href="https://fonts.googleapis.com/css?family=Inconsolata|M+PLUS+Rounded+1c:300,400,700" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Inconsolata|M+PLUS+Rounded+1c:300,400,500,700" rel="stylesheet">
         <link rel="stylesheet" href="css/main.css" type="text/css">
         <script src="scripts/vue.js"></script>
     </head>
     <body>
         <div id="app" class="container">
             <!-- modals -->
-            <div class="modal" v-if="toggleModal">
-                <h2>Hey there!</h2>
-                <p>Welcome to Meow Meow Chat. To get started, type in your name below.</p>
-                <div v-if="error" class="error" v-cloak><span>{{ error }}</span></div>
-                <div class="btn-group">
-                    <input type="text" @keyup.enter="joinNamed(clientName)" placeholder="name..." v-model="clientName" maxlength="15" autofocus>
-                    <a class="btn" @click="joinNamed(clientName)"><span>Enter</span></a>
-                </div>
-                <span class="btn-alt" @click="joinAnon">Join Anonymously</span>
-            </div>
-            <div class="modal" v-if="disconnected" v-cloak>
-                <h2>Uh oh!</h2>
-                <p>Looks like you've been disconnected. Refresh the page to rejoin.</p>
-            </div>
-            <div class="modal" v-if="toggleName" v-cloak>
-                <h2>Change name</h2>
-                <div v-if="error" class="error" v-cloak><span>{{ error }}</span></div>
-                <div class="btn-group">
-                    <input type="text" @keyup.enter="toggleName = !toggleName" placeholder="name..." v-model="clientName" maxlength="15" autofocus>
-                    <a class="btn" @click="toggleName = !toggleName"><span>Change</span></a>
-                </div>
-            </div>
+            <chat-modal v-if="toggleModal" title="Hey there!">
+              <p>Welcome to Meow Meow Chat. To get started, type in your name below.</p>
+              <div v-if="error" class="error" v-cloak><span>{{ error }}</span></div>
+              <div class="btn-group">
+                  <input 
+                    ref="newNameInput"
+                    type="text" 
+                    @keyup.enter="joinChat(clientName)" 
+                    placeholder="name..." 
+                    v-model="clientName" 
+                    maxlength="15" 
+                    autofocus>
+                  <button class="btn" type="button" @click="joinChat(clientName)">
+                    <span>Enter</span>
+                  </button>
+              </div>
+              <button class="btn-alt" type="button" @click="joinChat('Anonymous Cat')">Join Anonymously</button>
+            </chat-modal>
+            <chat-modal v-if="disconnected" v-cloak title="Uh oh!">
+              <p>Looks like you've been disconnected. Refresh the page to rejoin.</p>
+            </chat-modal>
+            <chat-modal v-if="toggleName" v-cloak title="Change Name">
+              <div v-if="error" class="error" v-cloak><span>{{ error }}</span></div>
+              <form class="btn-group" @submit.prevent="setName(clientName)">
+                  <input ref="changeNameInput" type="text" placeholder="name..." v-model.lazy="clientName" maxlength="15" autofocus>
+                  <button class="btn" type="submit">
+                    <span>Change</span>
+                  </button>
+              </form>
+            </chat-modal>
             <pic-select v-if="togglePic" :images="images" @set-image="setImage($event)"></pic-select>
             <!-- end modals -->
             <!-- chat -->
             <div class="main">
                 <h2>Meow Meow Chat</h2>
                 <p class="chat-hint" v-cloak>{{ hint }}</p>
-                <div id="chat"></div>
+                <div id="chat" ref="chat">
+                  <chat-message 
+                    v-for="(message, i) in chatMessages" 
+                    :key="i"
+                    :message="message">
+                  </chat-message>
+                </div>
                 <div id="sidebar">
                     <div class="user-settings">
-                        <img :src="profileImage" alt="Profile picture" class="user-settings__image" @click="togglePic = !togglePic"  :class="{ hidden: notActive }" v-cloak>
-                        <span class="user-settings__name" :style="{ color: clientColour }"  :class="{ hidden: notActive }" @click="toggleName = !toggleName" v-cloak>{{ clientName }}</span>
+                        <img :src="profileImage" alt="Profile picture" class="user-settings__image" @click="togglePic = true"  :class="{ hidden: notActive }" v-cloak>
+                        <span class="user-settings__name" :style="{ color: clientColour }"  :class="{ hidden: notActive }" @click="openNameModal" v-cloak>{{ clientName }}</span>
                         <div class="user-settings__colour"  :class="{ hidden: notActive }" v-cloak>
                             <input type="color" name="color" v-model="clientColour">
                             <span>{{ clientColour }}</span>
                         </div>
                     </div>
                     <div class="users">
-                        <div class="user-tile" v-for="(member, i) in members" :key="i" v-cloak>
+                        <div 
+                          :class="{ 'user-tile': true, 'user-tile--current': member.id === clientInfo.id }" 
+                          v-for="member in members" 
+                          :key="member.id" 
+                          v-cloak>
                             <img :src="member.image" alt="Member icon" class="user-tile__img">
                             <span class="user-tile__name">{{ member.name }}</span>
                         </div>
                     </div>
                 </div>
-                <input type="text" placeholder="type a message..." @keyup.enter="sendMsg" v-model="clientMsg" maxlength="250">
-                <a id="send" class="btn" @click="sendMsg"><img src="images/paper-plane.png" width="24" height="16"></a>
-                <span class="memberCount" v-cloak>{{ memberCount }} members in chat</span>
+                <input 
+                  ref="chatInput" 
+                  type="text" 
+                  placeholder="type a message..." 
+                  @keyup.enter="sendMsg" 
+                  v-model="clientMsg" 
+                  maxlength="250">
+                <button id="send" class="btn" @click="sendMsg" type="button">
+                  <img src="images/paper-plane.png" width="24" height="16">
+                </button>
+                <span class="memberCount" v-cloak>{{ members.length }} members in chat</span>
             </div>
             <!-- end chat -->
             <footer>

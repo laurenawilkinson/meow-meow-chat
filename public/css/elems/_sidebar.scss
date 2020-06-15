@@ -63,18 +63,22 @@
 
     }
 
-    .users{
+    .users {
         overflow-x: hidden;
         overflow-y: auto;
-        margin: 1em;
         height: 50vh;
 
         .user-tile{
             display: flex;
             align-items: center;
+            font-weight: 500;
 
             &:nth-of-type(odd){
                 background: $grey2;
+            }
+
+            &.user-tile--current {
+              background: $chat-blue;
             }
 
             > * {

@@ -1,14 +1,14 @@
-# Meow Meow Chat!
+# Meow Meow Chat! :cat:
 
-:cat: A websocket app using node.js with express, now using Vue on the front end.  
-:cat: Chat with others online!  
-:cat: Cat themed!  
+- A websocket app using Node.js with express, now using Vue on the front end.  
+- Chat with others online!  
+- Cat themed!  
 
 ## Features in the works
 
 - ~~Styling, utilising CSS Grid and Flexbox~~  
 - Possibly markup messages  
-- Chat history appears when you enter the chatroom  
+- ~~Chat history appears when you enter the chatroom~~
 - Typing indicator
 
 

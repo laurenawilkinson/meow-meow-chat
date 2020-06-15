@@ -36,14 +36,20 @@ body .btn {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  -webkit-box-shadow: inset 0 0 20px 3px rgba(0, 0, 0, 0.1);
-          box-shadow: inset 0 0 20px 3px rgba(0, 0, 0, 0.1);
+  font-family: inherit;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  border: 0;
 }
 
 body .btn-alt {
   text-decoration: underline;
   color: #53599A;
   cursor: pointer;
+  background-color: transparent;
+  border: 0;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 body .btn-group {
@@ -58,7 +64,7 @@ body .btn-group > *:not(:last-child) {
 }
 
 body .btn * {
-  z-index: 100;
+  z-index: 3;
   position: relative;
 }
 
@@ -83,7 +89,7 @@ body .btn:hover:after {
 
 body input {
   background: #e3e4e5;
-  border: 0;
+  border: 1px solid transparent;
   padding: 1em;
   -webkit-transition: 0.3s ease-out;
   transition: 0.3s ease-out;
@@ -92,8 +98,7 @@ body input {
 
 body input:focus {
   outline: none;
-  -webkit-box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.3);
-          box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid #53599A;
 }
 
 .hidden, [v-cloak] {
@@ -180,6 +185,17 @@ body input:focus {
   padding: 3em;
   -webkit-box-shadow: 2px 8px 20px 5px rgba(0, 0, 0, 0.3);
           box-shadow: 2px 8px 20px 5px rgba(0, 0, 0, 0.3);
+}
+
+.modal-overlay {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  z-index: 10;
 }
 
 .modal__flex {
@@ -303,7 +319,6 @@ body input:focus {
 #sidebar .users {
   overflow-x: hidden;
   overflow-y: auto;
-  margin: 1em;
   height: 50vh;
 }
 
@@ -314,10 +329,15 @@ body input:focus {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  font-weight: 500;
 }
 
 #sidebar .users .user-tile:nth-of-type(odd) {
   background: #cfd0d1;
+}
+
+#sidebar .users .user-tile.user-tile--current {
+  background: #68d9e8;
 }
 
 #sidebar .users .user-tile > * {
@@ -338,7 +358,7 @@ body input:focus {
   height: 70vh;
   overflow-y: scroll;
   overflow-x: hidden;
-  background: #e3e4e5;
+  background: white;
   text-align: left;
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
@@ -351,11 +371,14 @@ body input:focus {
   background: white;
   font-family: 'Inconsolata', monospace;
   padding: 1em;
-  margin: 0.5em;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   overflow: hidden;
+}
+
+.msg + .msg {
+  border-top: 1px solid #e3e4e5;
 }
 
 .msg .col {

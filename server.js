@@ -14,10 +14,9 @@ const wss = new WebSocketServer.Server({ server });
 let members = {
   type: 'members',
   list: []
-},
-ids = [],
-chatMessages = [];
-
+};
+let ids = [];
+let chatMessages = [];
 
 // Broadcast to all.
 wss.broadcast = function broadcast(data) {
@@ -31,77 +30,64 @@ wss.broadcast = function broadcast(data) {
   });
 };
 
-function getID() {
+const getID = () => {
   let r = Math.floor(Math.random() * 9000);
-  if (ids.includes(r)){
-    getID();
-  }
-  else{
+  if (ids.includes(r)) getID()
+  else {
     ids.push(r);
     return r;
   }
 }
 
+
 wss.on('connection', (ws) => {
+  const getThisId = (element) => {
+    return element.id === ws.id;
+  }
+
   ws.id = getID();
-  let clientCount = {
-    type: 'count',
-    count: wss.clients.size
-  };
   
   wss.broadcast(JSON.stringify(members));
-  wss.broadcast(JSON.stringify(clientCount));
+  ws.send(JSON.stringify({ type: 'messages', list: chatMessages }));
   
   ws.on('message', (message) => {
-      console.log('received: ', message);
+    console.log('received: ', message);
 
-      // log message in chatMessages array
-
-      let json = JSON.parse(message);
+    // log message in chatMessages array
+    let json = JSON.parse(message);
+    
+    if (json.type == 'client') {
+      let thisClientID = members.list.findIndex(getThisId);
       
-      if(json.type == 'client'){
-        function getThisId(element){
-          return element.id === ws.id;
-        }
-        let thisClientID = members.list.findIndex(getThisId);
+      if (thisClientID > -1) {
+        // search for id
+        console.log('exisiting client!');
         
-        if (thisClientID !== -1){
-          // search for id
-          console.log('exisiting client!');
-          
-          // update information (name, image)
-          members.list[thisClientID].name = json.name;
-          members.list[thisClientID].image = json.image;
-        }
-        else{
-          json.id = ws.id;
-          members.list.push(json);
-          console.log(members.list);
-        }
-        wss.broadcast(JSON.stringify(members));
+        // update information (name, image)
+        members.list[thisClientID].name = json.name;
+        members.list[thisClientID].image = json.image;
       }
       else {
-        wss.broadcast(message);
+        json.id = ws.id;
+        members.list.push(json);
+        ws.send(JSON.stringify(json))
       }
+      wss.broadcast(JSON.stringify(members));
+    }
+    else {
+      chatMessages.push(json)
+      if (chatMessages.length > 20) chatMessages.shift();
+      wss.broadcast(message);
+    }
   });
   ws.on('close', () => {
-      console.log('Client disconnected');
-      clientCount = {
-        type: 'count',
-        count: wss.clients.size
-      };
+    console.log('Client disconnected');
 
-      wss.broadcast(JSON.stringify(clientCount))
+    // update members list
+    let thisClientID = members.list.findIndex(getThisId);
+    members.list.splice(thisClientID, 1);
 
-      // update members list
-      function getThisId(element){
-        return element.id === ws.id;
-      }
-      let thisClientID = members.list.findIndex(getThisId);
-      console.log(thisClientID)
-      members.list.splice(thisClientID, 1);
-
-      wss.broadcast(JSON.stringify(members));
+    wss.broadcast(JSON.stringify(members));
   });
 });
 console.log('WebSocket server listening for connection...');
